@@ -9,6 +9,7 @@ public class GreetingController {
     
 	@Value("${pathohub.springwork.greeting.message.name}")
 	private String name;
+	
 	@RequestMapping("/")
     public String index() {
         return "Hi "+name+"!, Greetings from Spring Boot!";
