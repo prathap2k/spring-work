@@ -1,39 +1,53 @@
 package com.pathohub.springwork.services;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
-import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig 
 {
-	@Bean
-	public Docket api() { 
-		return new Docket(DocumentationType.SWAGGER_2)          
-	     .select()
-	     .apis(RequestHandlerSelectors.basePackage("com.pathohub.springwork.services.controller"))
-	     .paths(PathSelectors.ant("/hello-world/*"))
-	     .build()
-	     .apiInfo(apiInfo());
-	}
+	
+    @Autowired
+    Environment env;
 
-private ApiInfo apiInfo() {
-   @SuppressWarnings("deprecation")
-ApiInfo apiInfo = new ApiInfo(
-     "My REST API",
-     "Some custom description of API.",
-     "API TOS",
-     "Terms of service",
-     "prathap2k@gmail.com",
-     "License of API",
-     "API license URL");
-   return apiInfo;
-}
+
+    @Bean
+    public Docket documentation() {
+    	System.out.println("appname->" + env.getProperty("spring.application.name"));
+        return new Docket(DocumentationType.SWAGGER_2)
+        		.apiInfo(metadata())
+        		.groupName(env.getProperty("spring.application.name"))
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(regex("/springboot/.*"))
+                .build()
+                .pathMapping("/");
+    }
+
+    @Bean
+    public UiConfiguration uiConfig() {
+      return UiConfiguration.DEFAULT;
+    }
+
+    private ApiInfo metadata() {
+      return new ApiInfoBuilder()
+        .title(env.getProperty("info.app.name"))
+        .description( env.getProperty("info.app.description"))
+        .version( env.getProperty("info.version"))
+        .contact("prathap2k@gmail.com")
+        .build();
+    }
 }
