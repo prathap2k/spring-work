@@ -1,6 +1,8 @@
 sudo: false
 language: java
 dk: openjdk8
+before_install:
+  - chmod +x mvnw
 script:
 - ./mvnw clean install -B
 - ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent
